@@ -1,0 +1,297 @@
+body {
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #1e1e1e, #3c3c3c);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #f0f0f0;
+}
+
+.container {
+  max-width: 1100px;
+  position: relative;
+  top: 40px;
+  margin: 20px;
+  padding: 20px;
+  background-color: rgba(30, 30, 30, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+  color: #f0f0f0;
+  margin-bottom: 20px;
+}
+
+#weather-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.card {
+  flex-basis: 100%;
+  padding: 20px;
+  background-color: rgba(50, 50, 50, 0.7);
+  border-radius: 20px;
+  margin-bottom: 20px;
+  margin-top: 40px;
+  text-align: center;
+  position: relative;
+}
+
+.card img {
+  display: block;
+  margin: 0 auto;
+}
+
+#forecast-cards {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
+
+#forecast-cards div {
+  width: 16%;
+  padding: 15px;
+  background-color: #2d2d2d;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  color: #f0f0f0;
+}
+
+#forecast-cards img {
+  display: block;
+  margin: 0 auto;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #565656, #888888);
+  color: #f0f0f0;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.button:hover {
+  background: linear-gradient(135deg, #888888, #565656);
+}
+
+.additional-info {
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+#loading {
+  text-align: center;
+  font-size: 24px;
+  margin-top: 20px;
+  color: #f0f0f0;
+}
+
+#location,
+#temperature,
+#description,
+#humidity,
+#wind {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+@media only screen and (max-width: 600px) {
+  .card,
+  #forecast-cards div {
+    flex-basis: 100%;
+  }
+
+  .button {
+    display: block;
+    width: 100%;
+  }
+}
+
+#city-input {
+  width: 50%;
+  padding: 10px;
+  border: none;
+  border-radius: 25px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  background: linear-gradient(135deg, #565656, #888888);
+  color: #f0f0f0;
+  transition: background-color 0.3s ease;
+}
+
+/* Animations */
+#forecast-cards div {
+  transition: transform 0.3s ease;
+}
+
+#forecast-cards div:hover {
+  transform: translateY(-5px);
+}
+
+#menu-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 7%;
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+  background-color: rgba(30, 30, 30, 0.9);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10000;
+  border-bottom: 1px solid #565656;
+}
+
+.menu-button,
+.login-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #444444;
+  color: #f0f0f0;
+  cursor: pointer;
+}
+
+.menu-button {
+  margin-right: auto;
+}
+
+.login-button {
+  margin-right: 1%;
+  position: absolute;
+  top: 0;
+}
+
+#user-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#user-container button {
+  background: none;
+  border: none;
+  color: #f0f0f0;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #565656;
+  padding: 12px;
+  margin: 2px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: #444444;
+  color: #f0f0f0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+
+.dropdown-content button {
+  background: none;
+  border: none;
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+#user-container:hover .dropdown-content {
+  display: block;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+#user-name-display {
+  margin-right: 150px;
+  font-family: 'Courier New', Courier, monospace;
+  margin-left: 250px;
+  font-size: 30px;
+  color: #f0f0f0;
+}
+
+.dropbtn {
+  background-color: #444444;
+  color: #f0f0f0;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.dropbtn:hover,
+.dropbtn:focus {
+  background-color: #565656;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: fixed;
+  top: 42px;
+  left: 0;
+  background-color: #444444;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.7);
+  z-index: 1;
+  width: 97px;
+}
+
+.dropdown-content a {
+  color: #f0f0f0;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content button:hover {
+  background-color: #565656;
+}
+
+.show {
+  display: block;
+}
+
+#username {
+  position: relative;
+  align-items: center;
+}
+
+#user-name {
+  font-size: 140%;
+  font-family: fantasy;
+  color: antiquewhite;
+}

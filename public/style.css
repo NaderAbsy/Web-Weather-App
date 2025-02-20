@@ -1,0 +1,62 @@
+body {
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: #fff;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.signup-container,
+.login-container,
+.reset-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.signup-container h1,
+.login-container h1,
+.reset-container h2 {
+  margin-bottom: 20px;
+}
+
+.signup-container input,
+.login-container input,
+.reset-container input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+}
+
+.signup-container button,
+.login-container button,
+.reset-container button {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #0072ff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.signup-container a,
+.login-container a,
+.reset-container a {
+  color: #00c6ff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.signup-container a:hover,
+.login-container a:hover,
+.reset-container a:hover {
+  text-decoration: underline;
+}

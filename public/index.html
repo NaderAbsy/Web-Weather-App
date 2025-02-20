@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link id="Style" rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+  </head>
+  <body> 
+  <div id="menu-container">
+    <div class="dropdown">
+      <button onclick="ToggleMenu()" class="dropbtn">Theme</button>
+      <div id="myDropdown" class="dropdown-content">
+        <button class="theme" value="Light" onclick="ChangeTheme(value)">Light</button>
+        <button class="theme" value="Dark" onclick="ChangeTheme(value)">Dark</button>
+        <button class="theme" value="Pink" onclick="ChangeTheme(value)">Pink</button>
+        <button class="theme" value="Pink2" onclick="ChangeTheme(value)">Pink 2</button>
+        <button class="theme" value="Green" onclick="ChangeTheme(value)">Green</button>
+        <button class="theme" value="styles" onclick="ChangeTheme(value)">Default</button>
+      </div>
+    </div>
+    <div id="username">
+      <p id="user-name"></p>
+    </div>
+    <div id="user-container">
+      <button id="login-button">Log In</button>
+      <div id="user-dropdown">
+        <button id="logout-button">Log Out</button>
+      </div>
+    </div>
+  </div>
+    <div class="container">
+      <h1>Weather App</h1>
+      <div id="weather-info">
+        <div class="card">
+          <div id="location">Location</div>
+          <div id="temperature">Temperature</div>
+          <div id="description">Description</div>
+          <div id="humidity">Humidity</div>
+          <div id="wind">Wind</div>
+        </div>
+        <div id="forecast-cards">
+          <!-- Forecast cards will be dynamically added here -->
+        </div>
+      </div>
+      <input type="text" id="city-input" placeholder="Enter city name" />
+      <button id="search-button" class="button">Search</button>
+      <button id="toggle-units" class="button">Switch to Fahrenheit</button>
+      <div id="loading">Loading...</div>
+    </div>
+    <script src="script.js"></script>
+    <script type="module" src="fireBaseScript.js"></script>
+    <script type="module" src="index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  </body>
+</html>

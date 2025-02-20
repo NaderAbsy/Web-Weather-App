@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Weather App</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="signup-container">
+      <h1>Sign Up</h1>
+      <div id="signup-form">
+        <input
+          type="text"
+          id="signup-first-name"
+          placeholder="First Name"
+          required
+        />
+        <input
+          type="text"
+          id="signup-last-name"
+          placeholder="Last Name"
+          required
+        />
+        <input
+          type="text"
+          id="signup-username"
+          placeholder="Username"
+          required
+        />
+        <input type="email" id="signup-email" placeholder="Email" required />
+        <input
+          type="password"
+          id="signup-password"
+          placeholder="Password"
+          required
+        />
+        <input
+          type="password"
+          id="signup-retype-password"
+          placeholder="Retype Password"
+          required
+        />
+        <button id="signup-button">Sign Up</button>
+      </div>
+      <p>Already have an account? <a href="login.html">Log In</a></p>
+      <a href="index.html">Back to home</a>
+    </div>
+    <script type="module" src="fireBaseScript.js"></script>
+    <script type="module" src="signup.js"></script>
+  </body>
+</html>
