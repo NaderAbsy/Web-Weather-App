@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Skyline — Weather</title>
-<meta name="description" content="A fast, clean weather app: current conditions, hourly outlook and a five-day forecast for any city.">
+<meta name="description" content="A fast, clean weather app: current conditions, an interactive hourly chart, air quality and a five-day forecast for any city.">
 <meta name="theme-color" content="#0b1220">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +21,14 @@
   </div>
 
   <div class="topbar-actions">
+    <button id="refresh-button" class="icon-btn" type="button" aria-label="Refresh weather">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4.5h-4.5"/></svg>
+    </button>
+
+    <button id="help-button" class="icon-btn" type="button" aria-label="Keyboard shortcuts">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 9a2.9 2.9 0 1 1 3.9 2.72c-.72.28-1.1.93-1.1 1.7v.6"/><path d="M12 17.3v.01"/><circle cx="12" cy="12" r="9"/></svg>
+    </button>
+
     <button id="unit-toggle" class="pill" type="button" aria-label="Switch to Fahrenheit">
       <span class="unit-active">°C</span><span class="unit-sep">/</span><span class="unit-idle">°F</span>
     </button>
@@ -48,7 +56,7 @@
   <section class="search-bar">
     <div class="search-field">
       <svg viewBox="0 0 24 24" aria-hidden="true" class="search-ico"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-      <input id="city-input" type="search" placeholder="Search for a city…" autocomplete="off"
+      <input id="city-input" type="search" placeholder="Search for a city…  (press / )" autocomplete="off"
              role="combobox" aria-expanded="false" aria-controls="suggestions" aria-autocomplete="list">
       <button id="clear-search" class="clear" type="button" aria-label="Clear search" hidden>×</button>
       <ul id="suggestions" class="suggestions" role="listbox" hidden></ul>
@@ -59,8 +67,13 @@
     </button>
   </section>
 
-  <p id="recent-wrap" class="recent" hidden>
-    <span class="recent-label">Recent</span>
+  <p id="saved-wrap" class="chips" hidden>
+    <span class="chips-label">Saved</span>
+    <span id="saved-list"></span>
+  </p>
+
+  <p id="recent-wrap" class="chips" hidden>
+    <span class="chips-label">Recent</span>
     <span id="recent-list"></span>
   </p>
 
@@ -70,8 +83,13 @@
   <section id="current" class="current card" hidden>
     <div class="current-head">
       <div>
-        <h1 id="place" class="place">—</h1>
-        <p id="local-time" class="muted"></p>
+        <div class="place-row">
+          <h1 id="place" class="place">—</h1>
+          <button id="fav-toggle" class="star" type="button" aria-pressed="false" aria-label="Save this city">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.6 2.6 5.3 5.8.85-4.2 4.1 1 5.78L12 16.9l-5.2 2.73 1-5.78-4.2-4.1 5.8-.85L12 3.6Z"/></svg>
+          </button>
+        </div>
+        <p class="muted"><span id="local-time"></span><span id="updated-ago" class="ago"></span></p>
       </div>
       <div class="condition">
         <img id="cond-icon" alt="" width="96" height="96">
@@ -87,35 +105,100 @@
 
     <ul class="metrics">
       <li><span class="metric-label">Humidity</span><span id="humidity" class="metric-value">—</span></li>
-      <li><span class="metric-label">Wind</span><span id="wind" class="metric-value">—</span></li>
+      <li class="metric-wind">
+        <span class="metric-label">Wind</span>
+        <span class="wind-row">
+          <span id="wind" class="metric-value">—</span>
+          <svg class="compass" viewBox="0 0 40 40" role="img" aria-hidden="true">
+            <circle class="compass-ring" cx="20" cy="20" r="16"/>
+            <text class="compass-n" x="20" y="9.5">N</text>
+            <g id="compass-needle" class="compass-needle"><path d="M20 8 L24 25 L20 21.5 L16 25 Z"/></g>
+          </svg>
+        </span>
+        <span id="wind-dir" class="metric-sub"></span>
+      </li>
       <li><span class="metric-label">Pressure</span><span id="pressure" class="metric-value">—</span></li>
       <li><span class="metric-label">Visibility</span><span id="visibility" class="metric-value">—</span></li>
       <li><span class="metric-label">Sunrise</span><span id="sunrise" class="metric-value">—</span></li>
       <li><span class="metric-label">Sunset</span><span id="sunset" class="metric-value">—</span></li>
     </ul>
+
+    <div id="daylight" class="daylight" hidden>
+      <div class="daylight-track"><span id="daylight-fill"></span><i id="daylight-now"></i></div>
+      <p id="daylight-text" class="muted"></p>
+    </div>
   </section>
 
-  <!-- ---------- hourly ---------- -->
+  <!-- ---------- hourly, with interactive chart ---------- -->
   <section id="hourly-section" class="card" hidden>
-    <h2 class="section-title">Next 24 hours</h2>
+    <div class="section-head">
+      <h2 class="section-title">Next 24 hours</h2>
+      <div class="series-switch" role="group" aria-label="Choose chart series">
+        <button type="button" class="seg is-on" data-series="temp" aria-pressed="true">Temp</button>
+        <button type="button" class="seg" data-series="pop"  aria-pressed="false">Rain</button>
+        <button type="button" class="seg" data-series="wind" aria-pressed="false">Wind</button>
+      </div>
+    </div>
+
+    <div id="chart" class="chart" tabindex="0" role="img"
+         aria-label="Hourly chart. Use the left and right arrow keys to step through each hour.">
+      <div id="chart-tip" class="chart-tip" hidden aria-hidden="true"></div>
+    </div>
+    <p id="chart-readout" class="sr-only" role="status" aria-live="polite"></p>
+
     <div class="hourly-scroll">
       <ul id="hourly" class="hourly"></ul>
     </div>
   </section>
 
+  <!-- ---------- air quality ---------- -->
+  <section id="air-section" class="card" hidden>
+    <h2 class="section-title">Air quality</h2>
+    <div class="aqi-head">
+      <p id="aqi-num" class="aqi-num">—</p>
+      <div>
+        <p id="aqi-label" class="aqi-label">—</p>
+        <p id="aqi-note" class="muted">—</p>
+      </div>
+    </div>
+    <div class="aqi-scale" aria-hidden="true">
+      <i data-level="1"></i><i data-level="2"></i><i data-level="3"></i><i data-level="4"></i><i data-level="5"></i>
+    </div>
+    <button id="aqi-toggle" class="link-btn" type="button" aria-expanded="false" aria-controls="aqi-detail">
+      Show pollutant breakdown
+    </button>
+    <ul id="aqi-detail" class="aqi-detail" hidden></ul>
+  </section>
+
   <!-- ---------- 5 day ---------- -->
   <section id="forecast-section" class="card" hidden>
-    <h2 class="section-title">5-day forecast</h2>
+    <h2 class="section-title">5-day forecast <span class="hint">— select a day for its hour-by-hour detail</span></h2>
     <ul id="forecast" class="forecast"></ul>
   </section>
 
   <!-- ---------- skeleton ---------- -->
   <div id="skeleton" class="skeleton" hidden>
     <div class="card sk-current"><div class="sk-line w40"></div><div class="sk-line w20 tall"></div><div class="sk-grid"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-    <div class="card"><div class="sk-line w30"></div><div class="sk-row"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="card"><div class="sk-line w30"></div><div class="sk-line tall"></div><div class="sk-row"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
   </div>
 
 </main>
+
+<dialog id="help-sheet" class="help-sheet">
+  <h2>Keyboard shortcuts</h2>
+  <ul class="keys">
+    <li><kbd>/</kbd><span>Focus the search box</span></li>
+    <li><kbd>u</kbd><span>Switch °C / °F</span></li>
+    <li><kbd>t</kbd><span>Switch light / dark theme</span></li>
+    <li><kbd>r</kbd><span>Refresh the current city</span></li>
+    <li><kbd>l</kbd><span>Use my location</span></li>
+    <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd><span>Chart: temperature, rain, wind</span></li>
+    <li><kbd>←</kbd> <kbd>→</kbd><span>Step through the chart, once it has focus</span></li>
+    <li><kbd>?</kbd><span>Open this list</span></li>
+    <li><kbd>Esc</kbd><span>Close</span></li>
+  </ul>
+  <button id="help-close" class="pill" type="button">Close</button>
+</dialog>
 
 <footer class="site-footer">
   <p>Data from <a href="https://openweathermap.org" rel="noopener" target="_blank">OpenWeather</a>
