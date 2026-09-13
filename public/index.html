@@ -38,16 +38,10 @@
       <svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a7 7 0 0 0 10.7 10.7Z"/></svg>
     </button>
 
-    <div class="account">
-      <button id="login-button" class="pill" type="button">Log in</button>
-      <button id="user-chip" class="pill" type="button" hidden aria-expanded="false">
-        <span id="user-name">—</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true" class="chev"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div id="user-dropdown" class="dropdown" hidden>
-        <button id="logout-button" type="button">Log out</button>
-      </div>
-    </div>
+    <!-- Accounts are built (login.html / signup.html / reset-password.html) but the
+         account UI is withheld until this deployment's domain is added under
+         Firebase Console > Authentication > Settings > Authorized domains.
+         Until then sign-in fails, and a button that always fails is worse than none. -->
   </div>
 </header>
 
@@ -206,7 +200,5 @@
 </footer>
 
 <script src="app.js"></script>
-<script type="module" src="fireBaseScript.js"></script>
-<script type="module" src="index.js"></script>
 </body>
 </html>

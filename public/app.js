@@ -4,8 +4,18 @@
 (function () {
   'use strict';
 
-  const API_KEY = 'd6d5d476efed3e0953cd23870e8672db';
-  const BASE = 'https://api.openweathermap.org';
+  // The OpenWeather key lives in the Netlify Function, not here. Everything
+  // goes through /api/weather so the key never reaches the browser.
+  const API = '/api/weather';
+  const api = function (endpoint, params) {
+    let url = API + '?endpoint=' + endpoint;
+    Object.keys(params).forEach(function (k) {
+      if (params[k] !== undefined && params[k] !== null) {
+        url += '&' + k + '=' + encodeURIComponent(params[k]);
+      }
+    });
+    return url;
+  };
   const FALLBACK_CITY = { name: 'Amman', country: 'JO', lat: 31.9539, lon: 35.9106 };
   const REFRESH_MS = 10 * 60 * 1000;
 
@@ -617,11 +627,11 @@
     inFlight = new AbortController();
     const signal = inFlight.signal;
 
-    const q = 'lat=' + place.lat + '&lon=' + place.lon + '&appid=' + API_KEY + '&units=' + units;
+    const q = { lat: place.lat, lon: place.lon, units: units };
 
     Promise.all([
-      fetch(BASE + '/data/2.5/weather?' + q, { signal }).then(handle),
-      fetch(BASE + '/data/2.5/forecast?' + q, { signal }).then(handle)
+      fetch(api('weather', q), { signal }).then(handle),
+      fetch(api('forecast', q), { signal }).then(handle)
     ])
       .then(function (results) {
         const now = results[0], forecast = results[1];
@@ -651,7 +661,8 @@
         if (err.name === 'AbortError') return;
         setLoading(false);
         showStatus(
-          err.status === 401 ? 'Weather service rejected the API key.'
+          err.status === 500 ? 'Weather service is not configured yet.'
+          : err.status === 401 ? 'Weather service rejected the API key.'
           : err.status === 429 ? 'Too many requests — the API rate limit was hit. Try again shortly.'
           : 'Could not load the forecast. Check your connection and try again.',
           true
@@ -659,7 +670,7 @@
       });
 
     // air quality is a separate product; a failure there must not sink the page
-    fetch(BASE + '/data/2.5/air_pollution?lat=' + place.lat + '&lon=' + place.lon + '&appid=' + API_KEY, { signal })
+    fetch(api('air', { lat: place.lat, lon: place.lon }), { signal })
       .then(handle).then(renderAir)
       .catch(function () { el.airSec.hidden = true; });
   }
@@ -678,7 +689,7 @@
 
   /* ---------- search suggestions (Geocoding API) ---------- */
   function fetchSuggestions(term) {
-    fetch(BASE + '/geo/1.0/direct?q=' + encodeURIComponent(term) + '&limit=6&appid=' + API_KEY)
+    fetch(api('geo', { q: term, limit: 6 }))
       .then(handle)
       .then(function (list) {
         suggestions = list.map(function (c) {

@@ -64,9 +64,15 @@ rules so nothing can be left visible after it is dismissed. Motion respects
 
 ## Configuration
 
-The OpenWeather key lives in `public/app.js`. It's a free-tier key with a rate limit rather
-than a billing risk, but it is visible to anyone viewing the page — the proper fix is to proxy
-requests through a Netlify Function so the key stays server-side.
+The OpenWeather key is held server-side. `netlify/functions/weather.js` proxies the four
+endpoints the app uses and appends the key from the `OPENWEATHER_API_KEY` environment
+variable, set under **Netlify → Site configuration → Environment variables**. The browser
+only ever calls `/api/weather`, so the key is never in page source. The function matches
+`endpoint` against a fixed list rather than forwarding a URL, so it cannot be used as an
+open proxy.
+
+Because API calls now go through a function, `python3 -m http.server` serves the static
+files but not `/api/weather`. Use `netlify dev` for a local run with the proxy working.
 
 Firebase config is in `public/fireBaseScript.js`. Those values are meant to be public; Firebase
 security comes from its rules, not from hiding that key. New deployment domains must be added
