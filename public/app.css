@@ -141,6 +141,9 @@ main {
   width: min(100% - 2rem, 1060px); margin: 0 auto; padding-bottom: 3rem;
   display: grid; gap: 1rem;
 }
+/* Grid items default to min-width:auto, so one wide child (the chart) stretches
+   the column past the container and scrolls the whole page sideways on phones. */
+main > * { min-width: 0; }
 
 .card {
   background: var(--surface);
@@ -308,8 +311,6 @@ main {
   .topbar { flex-wrap: wrap; gap: .6rem; }
   .search-bar { flex-direction: column; }
   .pill.ghost { justify-content: center; }
-  .forecast li { grid-template-columns: 4.2rem 2.2rem 1fr; row-gap: .2rem; }
-  .f-temps { grid-column: 1 / -1; text-align: right; }
   .current-head { flex-direction: column-reverse; align-items: flex-start; }
   .condition { flex-direction: row; }
   .condition img { width: 3.2rem; height: 3.2rem; }
@@ -525,7 +526,8 @@ kbd {
 @media (max-width: 620px) {
   .section-head { align-items: flex-start; }
   .chart { height: 160px; }
-  .f-row { grid-template-columns: 4.2rem 2.2rem 1fr auto 1rem; gap: .5rem; }
+  .f-row { grid-template-columns: 4.2rem 2.2rem 1fr 1rem; gap: .5rem; }
+  .f-temps { text-align: right; }
   .f-desc { display: none; }
 }
 
