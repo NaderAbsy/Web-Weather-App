@@ -1,65 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather App</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link id="Style" rel="stylesheet" href="styles.css" />
-    <link
-      rel="stylesheet"
-      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
-    />
-  </head>
-  <body> 
-  <div id="menu-container">
-    <div class="dropdown">
-      <button onclick="ToggleMenu()" class="dropbtn">Theme</button>
-      <div id="myDropdown" class="dropdown-content">
-        <button class="theme" value="Light" onclick="ChangeTheme(value)">Light</button>
-        <button class="theme" value="Dark" onclick="ChangeTheme(value)">Dark</button>
-        <button class="theme" value="Pink" onclick="ChangeTheme(value)">Pink</button>
-        <button class="theme" value="Pink2" onclick="ChangeTheme(value)">Pink 2</button>
-        <button class="theme" value="Green" onclick="ChangeTheme(value)">Green</button>
-        <button class="theme" value="styles" onclick="ChangeTheme(value)">Default</button>
-      </div>
-    </div>
-    <div id="username">
-      <p id="user-name"></p>
-    </div>
-    <div id="user-container">
-      <button id="login-button">Log In</button>
-      <div id="user-dropdown">
-        <button id="logout-button">Log Out</button>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skyline — Weather</title>
+<meta name="description" content="A fast, clean weather app: current conditions, hourly outlook and a five-day forecast for any city.">
+<meta name="theme-color" content="#0b1220">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="brand-mark"><path d="M6.5 18a4.5 4.5 0 0 1-.6-8.96 6 6 0 0 1 11.62-1.4A4.25 4.25 0 0 1 17.75 18H6.5Z"/></svg>
+    <span>Skyline</span>
+  </div>
+
+  <div class="topbar-actions">
+    <button id="unit-toggle" class="pill" type="button" aria-label="Switch to Fahrenheit">
+      <span class="unit-active">°C</span><span class="unit-sep">/</span><span class="unit-idle">°F</span>
+    </button>
+
+    <button id="theme-toggle" class="icon-btn" type="button" aria-label="Switch to light theme" aria-pressed="true">
+      <svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></svg>
+      <svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a7 7 0 0 0 10.7 10.7Z"/></svg>
+    </button>
+
+    <div class="account">
+      <button id="login-button" class="pill" type="button">Log in</button>
+      <button id="user-chip" class="pill" type="button" hidden aria-expanded="false">
+        <span id="user-name">—</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="chev"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div id="user-dropdown" class="dropdown" hidden>
+        <button id="logout-button" type="button">Log out</button>
       </div>
     </div>
   </div>
-    <div class="container">
-      <h1>Weather App</h1>
-      <div id="weather-info">
-        <div class="card">
-          <div id="location">Location</div>
-          <div id="temperature">Temperature</div>
-          <div id="description">Description</div>
-          <div id="humidity">Humidity</div>
-          <div id="wind">Wind</div>
-        </div>
-        <div id="forecast-cards">
-          <!-- Forecast cards will be dynamically added here -->
-        </div>
-      </div>
-      <input type="text" id="city-input" placeholder="Enter city name" />
-      <button id="search-button" class="button">Search</button>
-      <button id="toggle-units" class="button">Switch to Fahrenheit</button>
-      <div id="loading">Loading...</div>
+</header>
+
+<main id="main">
+
+  <section class="search-bar">
+    <div class="search-field">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="search-ico"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="city-input" type="search" placeholder="Search for a city…" autocomplete="off"
+             role="combobox" aria-expanded="false" aria-controls="suggestions" aria-autocomplete="list">
+      <button id="clear-search" class="clear" type="button" aria-label="Clear search" hidden>×</button>
+      <ul id="suggestions" class="suggestions" role="listbox" hidden></ul>
     </div>
-    <script src="script.js"></script>
-    <script type="module" src="fireBaseScript.js"></script>
-    <script type="module" src="index.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-  </body>
+    <button id="geo-button" class="pill ghost" type="button" aria-label="Use my location">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+      <span>My location</span>
+    </button>
+  </section>
+
+  <p id="recent-wrap" class="recent" hidden>
+    <span class="recent-label">Recent</span>
+    <span id="recent-list"></span>
+  </p>
+
+  <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+
+  <!-- ---------- current conditions ---------- -->
+  <section id="current" class="current card" hidden>
+    <div class="current-head">
+      <div>
+        <h1 id="place" class="place">—</h1>
+        <p id="local-time" class="muted"></p>
+      </div>
+      <div class="condition">
+        <img id="cond-icon" alt="" width="96" height="96">
+        <p id="cond-text" class="cond-text">—</p>
+      </div>
+    </div>
+
+    <div class="temp-row">
+      <p class="temp"><span id="temp">—</span><span class="deg" id="deg">°C</span></p>
+      <p class="feels muted">Feels like <span id="feels">—</span></p>
+      <p class="hilo"><span id="hi">—</span> <span class="muted">/</span> <span id="lo">—</span></p>
+    </div>
+
+    <ul class="metrics">
+      <li><span class="metric-label">Humidity</span><span id="humidity" class="metric-value">—</span></li>
+      <li><span class="metric-label">Wind</span><span id="wind" class="metric-value">—</span></li>
+      <li><span class="metric-label">Pressure</span><span id="pressure" class="metric-value">—</span></li>
+      <li><span class="metric-label">Visibility</span><span id="visibility" class="metric-value">—</span></li>
+      <li><span class="metric-label">Sunrise</span><span id="sunrise" class="metric-value">—</span></li>
+      <li><span class="metric-label">Sunset</span><span id="sunset" class="metric-value">—</span></li>
+    </ul>
+  </section>
+
+  <!-- ---------- hourly ---------- -->
+  <section id="hourly-section" class="card" hidden>
+    <h2 class="section-title">Next 24 hours</h2>
+    <div class="hourly-scroll">
+      <ul id="hourly" class="hourly"></ul>
+    </div>
+  </section>
+
+  <!-- ---------- 5 day ---------- -->
+  <section id="forecast-section" class="card" hidden>
+    <h2 class="section-title">5-day forecast</h2>
+    <ul id="forecast" class="forecast"></ul>
+  </section>
+
+  <!-- ---------- skeleton ---------- -->
+  <div id="skeleton" class="skeleton" hidden>
+    <div class="card sk-current"><div class="sk-line w40"></div><div class="sk-line w20 tall"></div><div class="sk-grid"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="card"><div class="sk-line w30"></div><div class="sk-row"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p>Data from <a href="https://openweathermap.org" rel="noopener" target="_blank">OpenWeather</a>
+     · Built by <a href="https://naderabsy.com" rel="noopener" target="_blank">Nader Absy</a></p>
+</footer>
+
+<script src="app.js"></script>
+<script type="module" src="fireBaseScript.js"></script>
+<script type="module" src="index.js"></script>
+</body>
 </html>
