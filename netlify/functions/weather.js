@@ -69,4 +69,14 @@ export default async (request) => {
   }
 };
 
-export const config = { path: '/api/weather' };
+export const config = {
+  path: '/api/weather',
+  // Each visitor (per IP) gets 60 calls a minute. Loading a city takes 3 and search
+  // suggestions 1 per pause in typing, so real use stays well below this; a script
+  // looping over the proxy gets HTTP 429 instead of spending the OpenWeather quota.
+  rateLimit: {
+    windowLimit: 60,
+    windowSize: 60,
+    aggregateBy: ['ip', 'domain']
+  }
+};

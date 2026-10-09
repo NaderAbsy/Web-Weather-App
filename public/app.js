@@ -671,7 +671,7 @@
         showStatus(
           err.status === 500 ? 'Weather service is not configured yet.'
           : err.status === 401 ? 'Weather service rejected the API key.'
-          : err.status === 429 ? 'Too many requests — the API rate limit was hit. Try again shortly.'
+          : err.status === 429 ? 'Too many requests in a short time. Wait a minute and try again.'
           : 'Could not load the forecast. Check your connection and try again.',
           true
         );
