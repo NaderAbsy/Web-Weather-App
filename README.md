@@ -2,8 +2,11 @@
 
 **Live: [naderabsy-weather.netlify.app](https://naderabsy-weather.netlify.app)**
 
-A weather app built on the OpenWeather API, with Firebase authentication and a
-Firestore-backed user store. No frameworks, no build step — plain HTML, CSS and JavaScript.
+A weather app built on the OpenWeather API, with an interactive 24-hour chart, air quality and a
+5-day forecast that opens up hour by hour. No frameworks and no build step: plain HTML, CSS and
+JavaScript, with a small serverless function that keeps the API key off the browser.
+
+![Skyline showing the current weather in Amman, with a wind compass, the daylight bar and the 24-hour chart](docs/screenshot.jpg)
 
 ## Features
 
@@ -24,35 +27,49 @@ Firestore-backed user store. No frameworks, no build step — plain HTML, CSS an
 - **Keyboard shortcuts** — <kbd>/</kbd> search, <kbd>u</kbd> units, <kbd>t</kbd> theme,
   <kbd>r</kbd> refresh, <kbd>l</kbd> location, <kbd>1</kbd>–<kbd>3</kbd> chart series,
   <kbd>?</kbd> for the full list
-- **Accounts** — sign up, log in, Google sign-in, password reset and email verification via Firebase
 
 ## Stack
 
 JavaScript (no framework, no build step) · hand-rolled SVG charting, no charting library ·
-OpenWeather Current, Forecast, Geocoding and Air Pollution APIs ·
-Firebase Authentication · Cloud Firestore · deployed on Netlify
+OpenWeather Current, Forecast, Geocoding and Air Pollution APIs · Netlify Functions · deployed on Netlify
 
 ## Structure
 
 ```
 public/
-  index.html              Main app
+  index.html              The app
   app.css                 All styling, themed with CSS custom properties
   app.js                  Weather data, chart, search, geolocation, units, theme
-  index.js                Auth UI wiring
-  fireBaseScript.js       Firebase initialisation and auth functions
-  login / signup / reset-password   Auth pages
-netlify.toml              Publish config and headers
+  login / signup / reset-password, index.js, fireBaseScript.js
+                          Firebase account pages; built, but not linked from the live app (see below)
+netlify/functions/
+  weather.js              Proxy to OpenWeather that adds the API key on the server
+netlify.toml              Publish directory, functions and headers
+docs/screenshot.jpg       The image above
 ```
+
+## Keeping the API key secret
+
+The browser never sees the OpenWeather key. The app only calls `/api/weather`, and
+`netlify/functions/weather.js` forwards that request to OpenWeather with the key added from the
+`OPENWEATHER_API_KEY` environment variable (set under **Netlify → Site configuration →
+Environment variables**).
+
+The function only accepts the four endpoints the app uses (current weather, forecast, air
+pollution and geocoding) and a fixed set of query parameters. It never forwards a URL it's
+given, so it can't be used as an open proxy, and any `appid` a caller sends is ignored.
 
 ## Running locally
 
+Because weather requests go through the function, a plain static server isn't enough. Use the
+Netlify CLI, which serves the site and the function together:
+
 ```bash
-cd public
-python3 -m http.server 4190
+npm install -g netlify-cli
+OPENWEATHER_API_KEY=your-key netlify dev
 ```
 
-Then open `http://localhost:4190`.
+Then open the address it prints (usually `http://localhost:8888`).
 
 ## Accessibility
 
@@ -62,21 +79,17 @@ a proper combobox, and the `[hidden]` attribute is forced to win over class-base
 rules so nothing can be left visible after it is dismissed. Motion respects
 `prefers-reduced-motion`.
 
-## Configuration
+## Accounts (switched off)
 
-The OpenWeather key is held server-side. `netlify/functions/weather.js` proxies the four
-endpoints the app uses and appends the key from the `OPENWEATHER_API_KEY` environment
-variable, set under **Netlify → Site configuration → Environment variables**. The browser
-only ever calls `/api/weather`, so the key is never in page source. The function matches
-`endpoint` against a fixed list rather than forwarding a URL, so it cannot be used as an
-open proxy.
+Sign-up, log-in, Google sign-in, password reset and email verification are built with Firebase
+Authentication and Firestore, in the account pages listed above. They're switched off on the
+live site because Firebase only allows sign-in from domains on its authorised list, and this
+deployment's domain hasn't been added yet. To turn them back on, add the domain under
+**Firebase Console → Authentication → Settings → Authorized domains**, then restore the account
+links and the `index.js` / `fireBaseScript.js` scripts in `public/index.html`.
 
-Because API calls now go through a function, `python3 -m http.server` serves the static
-files but not `/api/weather`. Use `netlify dev` for a local run with the proxy working.
-
-Firebase config is in `public/fireBaseScript.js`. Those values are meant to be public; Firebase
-security comes from its rules, not from hiding that key. New deployment domains must be added
-under **Firebase Console → Authentication → Settings → Authorized domains** or sign-in will fail.
+The Firebase config values in `public/fireBaseScript.js` are meant to be public; Firebase security
+comes from its rules, not from hiding that key.
 
 ---
 
