@@ -15,8 +15,15 @@ const ALLOWED = {
   geo:      '/geo/1.0/direct'
 };
 
-// Only these reach OpenWeather; anything else a caller appends is dropped.
-const PASS_THROUGH = ['lat', 'lon', 'units', 'q', 'limit'];
+// Only these reach OpenWeather, and only if they look like what the app sends;
+// anything else a caller appends is dropped.
+const PASS_THROUGH = {
+  lat:   (v) => isFinite(v) && Math.abs(v) <= 90,
+  lon:   (v) => isFinite(v) && Math.abs(v) <= 180,
+  units: (v) => v === 'metric' || v === 'imperial' || v === 'standard',
+  q:     (v) => v.length > 0 && v.length <= 100,
+  limit: (v) => /^([1-9]|10)$/.test(v)
+};
 
 export default async (request) => {
   const key = process.env.OPENWEATHER_API_KEY;
@@ -31,9 +38,13 @@ export default async (request) => {
   }
 
   const target = new URL('https://api.openweathermap.org' + path);
-  for (const name of PASS_THROUGH) {
+  for (const [name, valid] of Object.entries(PASS_THROUGH)) {
     const value = incoming.searchParams.get(name);
-    if (value !== null) target.searchParams.set(name, value);
+    if (value === null) continue;
+    if (value.trim() === '' || !valid(value)) {
+      return Response.json({ error: 'Invalid ' + name + '.' }, { status: 400 });
+    }
+    target.searchParams.set(name, value);
   }
   target.searchParams.set('appid', key);
 
@@ -44,8 +55,9 @@ export default async (request) => {
       status: upstream.status,
       headers: {
         'content-type': 'application/json',
-        // Forecasts move slowly; let the edge absorb repeat lookups.
-        'cache-control': 'public, max-age=300, s-maxage=600'
+        // Forecasts move slowly; let the edge absorb repeat lookups. Errors are
+        // never cached, so a brief upstream failure doesn't stick for ten minutes.
+        'cache-control': upstream.ok ? 'public, max-age=300, s-maxage=600' : 'no-store'
       }
     });
   } catch (err) {

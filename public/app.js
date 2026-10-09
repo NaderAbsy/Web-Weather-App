@@ -7,6 +7,14 @@
   // The OpenWeather key lives in the Netlify Function, not here. Everything
   // goes through /api/weather so the key never reaches the browser.
   const API = '/api/weather';
+
+  // Text from the APIs (place names, conditions) goes into HTML strings below, so it
+  // is escaped first. Place names come from community-edited map data.
+  const esc = function (v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
   const api = function (endpoint, params) {
     let url = API + '?endpoint=' + endpoint;
     Object.keys(params).forEach(function (k) {
@@ -303,7 +311,7 @@
       li.dataset.idx = String(i);
       li.innerHTML =
         '<p class="h-time">' + fmtHour(p.dt, tz) + '</p>' +
-        '<img src="' + icon(p.icon) + '" alt="' + p.desc + '" width="48" height="48" loading="lazy">' +
+        '<img src="' + esc(icon(p.icon)) + '" alt="' + esc(p.desc) + '" width="48" height="48" loading="lazy">' +
         '<p class="h-temp">' + round(p.temp) + '°</p>' +
         (p.pop > 10 ? '<p class="h-pop">' + p.pop + '%</p>' : '');
       li.addEventListener('mouseenter', function () { setActive(i, false); });
@@ -412,7 +420,7 @@
 
     el.chartTip.innerHTML =
       '<b>' + SERIES[series].fmt(p[series]) + '</b>' +
-      '<span class="tip-sub">' + fmtHour(p.dt, tz) + ' · ' + p.desc + '</span>';
+      '<span class="tip-sub">' + fmtHour(p.dt, tz) + ' · ' + esc(p.desc) + '</span>';
     // show first so the tip can be measured, then keep it inside the chart
     el.chartTip.hidden = false;
     const half = el.chartTip.offsetWidth / 2;
@@ -526,8 +534,8 @@
       row.setAttribute('aria-controls', panelId);
       row.innerHTML =
         '<span class="f-day">' + name + '</span>' +
-        '<img src="' + icon(mostCommon(day.icons)) + '" alt="" width="48" height="48" loading="lazy">' +
-        '<span class="f-desc">' + mostCommon(day.descs) + '</span>' +
+        '<img src="' + esc(icon(mostCommon(day.icons))) + '" alt="" width="48" height="48" loading="lazy">' +
+        '<span class="f-desc">' + esc(mostCommon(day.descs)) + '</span>' +
         '<span class="f-temps">' + round(day.max) + '° <span class="f-lo">' + round(day.min) + '°</span></span>' +
         '<svg class="f-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
 
@@ -538,7 +546,7 @@
       panel.innerHTML = '<ul class="f-hours">' + day.slots.map(function (s) {
         const pop = Math.round((s.pop || 0) * 100);
         return '<li><p class="fh-time">' + fmtHour(s.dt, tz) + '</p>' +
-               '<img src="' + icon(s.weather[0].icon) + '" alt="' + s.weather[0].description + '" width="40" height="40" loading="lazy">' +
+               '<img src="' + esc(icon(s.weather[0].icon)) + '" alt="' + esc(s.weather[0].description) + '" width="40" height="40" loading="lazy">' +
                '<p class="fh-temp">' + round(s.main.temp) + '°</p>' +
                (pop > 10 ? '<p class="fh-pop">' + pop + '%</p>' : '') + '</li>';
       }).join('') + '</ul>';
@@ -710,7 +718,7 @@
       const li = document.createElement('li');
       li.setAttribute('role', 'option');
       li.setAttribute('aria-selected', String(i === activeSuggestion));
-      li.innerHTML = '<span>' + s.name + (s.state ? ', ' + s.state : '') + '</span><span class="sug-country">' + s.country + '</span>';
+      li.innerHTML = '<span>' + esc(s.name) + (s.state ? ', ' + esc(s.state) : '') + '</span><span class="sug-country">' + esc(s.country) + '</span>';
       li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(i); });
       el.sugg.appendChild(li);
     });

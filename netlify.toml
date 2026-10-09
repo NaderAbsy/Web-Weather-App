@@ -5,5 +5,20 @@
 [[headers]]
   for = "/*"
   [headers.values]
+    # Stop browsers guessing content types
     X-Content-Type-Options = "nosniff"
+    # Don't leak full URLs to other sites
     Referrer-Policy = "strict-origin-when-cross-origin"
+    # Block framing (clickjacking); frame-ancestors below is the modern equivalent
+    X-Frame-Options = "DENY"
+    # Keep this window's opener isolated from cross-origin pages
+    Cross-Origin-Opener-Policy = "same-origin"
+    # Location is the only device API the app uses, and only for itself
+    Permissions-Policy = "geolocation=(self), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()"
+    # Scripts only from this site (app.js, and Netlify's own /.netlify/ scripts), no inline
+    # scripts or on*= handlers. Weather icons come from openweathermap.org; every API call
+    # goes to /api/weather on this site.
+    # If the Firebase account pages are switched back on, they also need
+    # https://www.gstatic.com in script-src and https://*.googleapis.com
+    # https://*.firebaseapp.com in connect-src (and frame-src for Google sign-in).
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://openweathermap.org; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
