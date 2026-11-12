@@ -93,4 +93,4 @@ comes from its rules, not from hiding that key.
 
 ---
 
-Built by [Nader Absy](https://naderabsy.com)
+Built by [Nader Absy](https://naderabsy.com) and [omarmilhim](https://github.com/omarmilhim)
